@@ -3,8 +3,8 @@
 *~
 .*.swp # vim
 *.flc # xemacs
-.DS_Store # MacOS
-Thumbs.db # Windows
+.DS_Store
+Thumbs.db
 
 # python
 *.pyc
