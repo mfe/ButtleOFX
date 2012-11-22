@@ -1,5 +1,4 @@
-import sys
-from PySide import QtCore, QtGui, QtDeclarative
+from PySide import QtCore, QtGui
 
 
 class NodeWrapper(QtCore.QObject):
@@ -16,52 +15,50 @@ class NodeWrapper(QtCore.QObject):
 
     def __init__(self, element):
         QtCore.QObject.__init__(self)
-        self._element = element
+        self.element = element
 
     @QtCore.Signal
-    def changed(self): pass
+    def changed(self):
+        pass
 
     # invokable
-    #@QtCore.Slot()
+    # @QtCore.Slot()
 
-    def _getName(self):
-        return str(self._element.name)
+    def getName(self):
+        return str(self.element.name)
 
-    def _setName(self, name):
-        self._element.name = name
+    def setName(self, name):
+        self.element.name = name
 
-    def _getColor(self):
-        return QtGui.QColor(self._element.r, self._element.g, self._element.b)
+    def getColor(self):
+        return QtGui.QColor(self.element.r, self.element.g, self.element.b)
 
-    def _setColor(self, r, g, b):
-        self._element.r = r
-        self._element.g = g
-        self._element.b = b
+    def setColor(self, r, g, b):
+        self.element.r = r
+        self.element.g = g
+        self.element.b = b
 
-    def _getXCoord(self):
-        return self._element.xCoord
+    def getXCoord(self):
+        return self.element.xCoord
 
-    def _setXCoord(self, x):
-        self._element.xCoord = x
+    def setXCoord(self, x):
+        self.element.xCoord = x
 
-    def _getYCoord(self):
-        return self._element.yCoord
+    def getYCoord(self):
+        return self.element.yCoord
 
-    def _setYCoord(self, y):
-        self._element.yCoord = y
+    def setYCoord(self, y):
+        self.element.yCoord = y
 
-    def _nbInput(self):
-        return self._element.nbInput
+    def nbInput(self):
+        return self.element.nbInput
 
-    def _setNbInput(self, nbInput):
-        self._element.nbInput = nbInput
+    def setNbInput(self, nbInput):
+        self.element.nbInput = nbInput
         self.changed()
 
-    changed = QtCore.Signal()
-    nodeName = QtCore.Property(unicode, _getName, _setName, notify=changed)
-    nodeColor = QtCore.Property(QtGui.QColor, _getColor, _setColor, notify=changed)
-    nodeXCoord = QtCore.Property(float, _getXCoord, _setXCoord, notify=changed)
-    nodeYCoord = QtCore.Property(float, _getYCoord, _setYCoord, notify=changed)
-    nodeNbInput = QtCore.Property(int, _nbInput, _setNbInput, notify=changed)
-
-
+    nodeName = QtCore.Property(unicode, getName, setName, notify=changed)
+    nodeColor = QtCore.Property(QtGui.QColor, getColor, setColor, notify=changed)
+    nodeXCoord = QtCore.Property(float, getXCoord, setXCoord, notify=changed)
+    nodeYCoord = QtCore.Property(float, getYCoord, setYCoord, notify=changed)
+    nodeNbInput = QtCore.Property(int, nbInput, setNbInput, notify=changed)

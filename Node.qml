@@ -2,15 +2,16 @@ import Qt 4.7
 
 Rectangle {
     id: node
-    height: 40
+    height: 40 + 9*(model.element.nodeNbInput-1)
     width: 110
     x: model.element.nodeXCoord
     y: model.element.nodeYCoord
+    z: index
     color: "transparent"
     Rectangle {
         id: nodeBorder
-        height: 40
-        width: 110
+        height: node.height
+        width: node.width
         anchors.centerIn: parent
         color: model.element.nodeColor
         opacity: 0.5
@@ -19,8 +20,8 @@ Rectangle {
     Rectangle {
         id: nodeRectangle
         anchors.centerIn: parent
-        height: 32
-        width: 102
+        height: node.height - 8
+        width: node.width - 8
         color: "#bbbbbb"
         radius: 8
         Text {
@@ -64,20 +65,38 @@ Rectangle {
             }
         }
     }
+    states: State {
+        name: "selected";
+        when: node.focus
+        PropertyChanges {
+            target: nodeRectangle
+            color: "#d9d9d9"
+        }
+    }
     MouseArea {
         anchors.fill: parent
         drag.target: parent
         drag.axis: Drag.XandYAxis
-        onPressed: parent.opacity = 0.5
+        onPressed: {
+            node.focus = true
+            parent.opacity = 0.5
+        }
         onReleased: {
-            parent.opacity = 1;
-            console.log(parent.x)
-            console.log(parent.y)
+            parent.opacity = 1
             model.element.nodeXCoord = parent.x
             model.element.nodeYCoord = parent.y
         }
         onClicked: {
             console.log(model.element.nodeName)
+            console.log("Node index : "+index)
+            node.focus = true
+        }
+    }
+    Keys.onPressed: {
+        if (event.key==Qt.Key_Delete) {
+            if (node.focus = true){
+                nodeListModel.removeElement(index)
+            }
         }
     }
 }
