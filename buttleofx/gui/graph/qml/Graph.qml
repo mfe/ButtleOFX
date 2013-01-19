@@ -8,8 +8,6 @@ Rectangle {
     width: 850
     height: 350 - y
 
-    property bool connectionIsBeingCreated : false
-
     property alias originX: connectnode.x
     property alias originY: connectnode.y
 
@@ -20,14 +18,17 @@ Rectangle {
 
     Rectangle {
         id: connectnode
+        anchors.fill: parent
+        color: "transparent"
         Item {
             id: nodes
             width: graphArea.width
             height: graphArea.height
             Repeater {
+                id: nodeRepeater
+                anchors.fill:parent
                 model : _buttleData.graphWrapper.nodeWrappers
                 Node {
-                    property bool connectionIsBeingCreated : graphArea.connectionIsBeingCreated
                     Component.onDestruction: {
                         nodes.forceActiveFocus()
                     }

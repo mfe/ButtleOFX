@@ -14,13 +14,17 @@ Rectangle {
         anchors.fill: parent
         hoverEnabled: true
         onPressed: {
-            graphArea.connectionIsBeingCreated = true
             color = "red"
             _buttleData.getGraphWrapper().clipPressed(m.nodeModel.name, port, index) // we send all information needed to identify the clip : nodename, port and clip number
         }
         onReleased: {
-            graphArea.connectionIsBeingCreated = false
             color = "#bbbbbb"
+
+            var coordReleased = clipMouseArea.mapToItem(nodeRepeater, mouseX, mouseY)
+            console.log("Mouse X  : ", coordReleased.x)
+            console.log("Mouse Y  : ", coordReleased.y)
+            console.log("Item at : ", nodeRepeater.childAt(coordReleased.x, coordReleased.y))
+
              //_buttleData.getGraphWrapper().clipReleased(m.nodeModel.name, port, index)
         }
         onEntered: {
@@ -30,20 +34,5 @@ Rectangle {
             color = "#bbbbbb"
         }
 
-        Connections {
-            target: graphArea
-            onConnectionIsBeingCreatedChanged: {
-                if(!connectionIsBeingCreated)
-                {
-                    console.log("End of creating connection")
-                    console.log("MouseArea containsMouse ? ", clipMouseArea.containsMouse)
-                }
-
-                if ((connectionIsBeingCreated==false) && (parent.containsMouse)) {
-                    console.log("clip contains mouse");
-                    _buttleData.getGraphWrapper().clipReleased(m.nodeModel.name, port, index);
-                }
-            }
-        }
     }
 }

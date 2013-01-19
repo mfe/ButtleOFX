@@ -62,7 +62,6 @@ Rectangle {
         Repeater {
             model: node.nbInput
             Clip {
-                property bool connectionIsBeingCreated : node.connectionIsBeingCreated
             }
         }
     }
@@ -76,7 +75,6 @@ Rectangle {
         Repeater {
             model: 1
             Clip {
-                property bool connectionIsBeingCreated : node.connectionIsBeingCreated
             }
         }
     }
