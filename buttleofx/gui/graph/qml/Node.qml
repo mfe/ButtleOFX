@@ -61,7 +61,9 @@ Rectangle {
         property string port : "input"
         Repeater {
             model: node.nbInput
-            Clip {}
+            Clip {
+                property bool connectionIsBeingCreated : node.connectionIsBeingCreated
+            }
         }
     }
     Column {
@@ -74,6 +76,7 @@ Rectangle {
         Repeater {
             model: 1
             Clip {
+                property bool connectionIsBeingCreated : node.connectionIsBeingCreated
             }
         }
     }
