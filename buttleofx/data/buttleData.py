@@ -36,8 +36,8 @@ class ButtleData(QtCore.QObject, Singleton):
         self._currentParamNodeName = None
         self._currentParamNodeWrapper = None
 
-        self._currentSelectedNodeName = None
-        self._currentSelectedNodeWrapper = None
+        self._currentSelectedNodeName = []
+        self._currentSelectedNodeWrapper = ["toto"]
 
         self._currentViewerNodeName = None
         self._currentViewerNodeWrapper = None
@@ -66,6 +66,17 @@ class ButtleData(QtCore.QObject, Singleton):
         """
         return self._currentSelectedNodeName
 
+    def getCurrentSelectedNodeNameList(self):
+        tmp = self._currentSelectedNodeName
+        self._currentSelectedNodeName = QObjectListModel()
+        for value in tmp:
+            self._currentSelectedNodeName.append(value)
+        return self._currentSelectedNodeName
+
+    @QtCore.Slot(int, result="QVariant")
+    def getCurrentSelectedNodeNameIndex(self, index):
+        return self.currentSelectedNodeNameList()[index]
+
     def getCurrentViewerNodeName(self):
         """
             Returns the name of the current viewer node.
@@ -83,6 +94,17 @@ class ButtleData(QtCore.QObject, Singleton):
             Returns the current selected nodeWrapper.
         """
         return self.getGraphWrapper().getNodeWrapper(self.getCurrentSelectedNodeName())
+
+    def getCurrentSelectedNodeWrapperList(self):
+        tmp = self._currentSelectedNodeWrapper
+        self._currentSelectedNodeWrapper = QObjectListModel()
+        for value in tmp:
+            self._currentSelectedNodeWrapper.append(value)
+        return self._currentSelectedNodeWrapper
+
+    @QtCore.Slot(int, result="QVariant")
+    def getCurrentSelectedNodeWrapperListIndex(self, index):
+        return self.getCurrentSelectedNodeWrapperList()[index]
 
     def getCurrentViewerNodeWrapper(self):
         """
@@ -105,9 +127,20 @@ class ButtleData(QtCore.QObject, Singleton):
         """
         Changes the current selected node and emits the change.
         """
-        if self._currentSelectedNodeName == nodeWrapper.getName():
-            return
-        self._currentSelectedNodeName = nodeWrapper.getName()
+        # if self._currentSelectedNodeName == nodeWrapper.getName():
+        #     return
+        # self._currentSelectedNodeName = nodeWrapper.getName()
+        # self.currentSelectedNodeChanged.emit()
+
+        self._currentSelectedNodeWrapperue = QObjectListModel()
+        self._currentSelectedNodeWrapper.append(nodeWrapper)
+        self._currentSelectedNodeName.append(nodeWrapper.getName())
+        self.currentSelectedNodeChanged.emit()
+
+    def setCurrentSelectedNodeWrapperList(self, nodeWrapper):
+        self._currentSelectedNodeWrapper = QObjectListModel()
+        self._currentSelectedNodeWrapper.append(nodeWrapper)
+        self._currentSelectedNodeName.append(nodeWrapper.getName())
         self.currentSelectedNodeChanged.emit()
 
     def setCurrentViewerNodeWrapper(self, nodeWrapper):
@@ -132,17 +165,37 @@ class ButtleData(QtCore.QObject, Singleton):
         """
         self.getGraph().createNode(nodeType, x, y)
 
+    # @QtCore.Slot()
+    # def destructionNode(self):
+    #     """
+    #         Function called when we want to delete a node from the QML.
+    #     """
+    #     # if at least one node in the graph
+    #     if len(self.getGraphWrapper().getNodeWrappers()) > 0 and len(self.getGraph().getNodes()) > 0:
+    #         # if a node is selected
+    #         if self._currentSelectedNodeName != None:
+    #             for nodeName in self._currentSelectedNodeName:
+    #                 self.getGraph.deleteNode(nodeName)
+
+    #             #self.getGraph().deleteNode(self._currentSelectedNodeName)
+    #     self._currentSelectedNodeName = []
+    #     self.currentSelectedNodeChanged.emit()
+    #     self._currentParamNodeName = None
+    #     self.currentParamNodeChanged.emit()
+    #     self._currentViewerNodeName = None
+    #     self.currentViewerNodeChanged.emit()
+
     @QtCore.Slot()
     def destructionNode(self):
-        """
-            Function called when we want to delete a node from the QML.
-        """
-        # if at least one node in the graph
+        #if at least one node in the graph
         if len(self.getGraphWrapper().getNodeWrappers()) > 0 and len(self.getGraph().getNodes()) > 0:
             # if a node is selected
             if self._currentSelectedNodeName != None:
-                self.getGraph().deleteNode(self._currentSelectedNodeName)
-        self._currentSelectedNodeName = None
+                for nodeName in self._currentSelectedNodeName:
+                    self.getGraph.deleteNode(nodeName.getName())
+
+                #self.getGraph().deleteNode(self._currentSelectedNodeName)
+        self._currentSelectedNodeNameList = []
         self.currentSelectedNodeChanged.emit()
         self._currentParamNodeName = None
         self.currentParamNodeChanged.emit()
@@ -276,6 +329,8 @@ class ButtleData(QtCore.QObject, Singleton):
     currentViewerNodeWrapper = QtCore.Property(QtCore.QObject, getCurrentViewerNodeWrapper, setCurrentViewerNodeWrapper, notify=currentViewerNodeChanged)
     currentSelectedNodeChanged = QtCore.Signal()
     currentSelectedNodeWrapper = QtCore.Property(QtCore.QObject, getCurrentSelectedNodeWrapper, setCurrentSelectedNodeWrapper, notify=currentSelectedNodeChanged)
+    currentSelectedNodeWrapperList = QtCore.Property(QtCore.QObject, getCurrentSelectedNodeWrapperList, setCurrentSelectedNodeWrapperList, notify=currentSelectedNodeChanged)
+    currentSelectedNodeWrapperListIndex = QtCore.Property(QtCore.QObject, getCurrentSelectedNodeWrapperListIndex, constant=True)
 
     # tuttle data
     tuttlePlugins = QtCore.Property(QtCore.QObject, getQObjectPluginsIdentifiers, constant=True)

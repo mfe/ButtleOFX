@@ -74,8 +74,8 @@ Rectangle {
         Text {
             anchors.centerIn: parent
             text: m.nodeModel.nameUser
-            font.pointSize: 10
-            color: (m.nodeModel == _buttleData.currentSelectedNodeWrapper) ? "#00b2a1" : "black"
+            font.pointSize: 10               
+            color: (m.nodeModel == _buttleData.getCurrentSelectedNodeWrapperListIndex(0) ? "#00b2a1" : "black")
         }
     }
     Column {
@@ -175,20 +175,34 @@ Rectangle {
         drag.axis: Drag.XandYAxis
         acceptedButtons: Qt.LeftButton | Qt.RightButton
         onPressed: {
-            // left button : we change the current selected node & we start moving
-            if (mouse.button == Qt.LeftButton) {
-                if(_buttleData.currentSelectedNodeWrapper != m.nodeModel) {
-                    _buttleData.currentSelectedNodeWrapper = m.nodeModel
-                    _buttleData.graphWrapper.zMax += 1
-                    parent.z = _buttleData.graphWrapper.zMax
+                if ((mouse.button == Qt.LeftButton) && (mouse.modifiers & Qt.ControlModifier)) {
+                    console.log("Controle + Clic")
+                    console.log(_buttleData.getCurrentSelectedNodeWrapperListIndex(0))
+                    _buttleData.currentSelectedNodeWrapperList = m.nodeModel
+                    stateMoving.state = "moving"
+                    console.log(stateMoving.state)
+                    _buttleData.graphWrapper.updateConnectionsCoord()
+
+                    console.log(m.nodeModel)
+                    console.log(_buttleData.getCurrentSelectedNodeWrapperListIndex(0))
+                 }
+             // left button : we change the current selected node & we start moving
+                if (mouse.button == Qt.LeftButton) {
+                    /*if(_buttleData.currentSelectedNodeWrapper != m.nodeModel) {
+                        _buttleData.currentSelectedNodeWrapper = m.nodeModel
+                        _buttleData.graphWrapper.zMax += 1
+                        parent.z = _buttleData.graphWrapper.zMax
+                    }
+                    stateMoving.state = "moving"
+                    _buttleData.graphWrapper.updateConnectionsCoord()*/
+
                 }
-                stateMoving.state = "moving"
-                _buttleData.graphWrapper.updateConnectionsCoord()
-            }
-            // right button : we change the current param node
-           else if (mouse.button == Qt.RightButton) {
-                 _buttleData.currentParamNodeWrapper = m.nodeModel;
-            }
+                // right button : we change the current param node
+               else if (mouse.button == Qt.RightButton) {
+                     _buttleData.currentParamNodeWrapper = m.nodeModel;
+                     console.log(m.nodeModel)
+                     console.log(_buttleData.getCurrentSelectedNodeWrapperListIndex(0))
+                }
         }
         onReleased: {
             // left button : we end moving
