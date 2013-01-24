@@ -75,7 +75,7 @@ Rectangle {
             anchors.centerIn: parent
             text: m.nodeModel.nameUser
             font.pointSize: 10               
-            //color: (m.nodeModel == _buttleData.getCurrentSelectedNodeWrapperIndex(0) ? "#00b2a1" : "black")
+            color: (_buttleData.isNodeWrapperInCurrentNodeWrapperList(m.nodeModel.name)? "#00b2a1" : "black")
         }
     }
     Column {
@@ -177,8 +177,7 @@ Rectangle {
         onPressed: {
                 if ((mouse.button == Qt.LeftButton) && (mouse.modifiers & Qt.ControlModifier)) {
                     console.log("Controle + Clic")
-                    _buttleData.currentSelectedNodeWrapperList = m.nodeModel
-                    _buttleData.currentSelectedNodeNameList = m.nodeModel
+                    _buttleData.addNodeNameToList(m.nodeModel)
                     stateMoving.state = "moving"
                     _buttleData.graphWrapper.updateConnectionsCoord()
                  }
