@@ -36,8 +36,8 @@ class ButtleData(QtCore.QObject, Singleton):
         self._currentParamNodeName = None
         self._currentParamNodeWrapper = None
 
-        self._currentSelectedNodeName = []
-        self._currentSelectedNodeWrapper = ["toto"]
+        self._currentSelectedNodeNameList = []
+        self._currentSelectedNodeWrapperList = []
 
         self._currentViewerNodeName = None
         self._currentViewerNodeWrapper = None
@@ -60,22 +60,22 @@ class ButtleData(QtCore.QObject, Singleton):
         """
         return self._currentParamNodeName
 
-    def getCurrentSelectedNodeName(self):
-        """
-            Returns the name of the current selected node.
-        """
-        return self._currentSelectedNodeName
+    # def getCurrentSelectedNodeName(self):
+    #     """
+    #         Returns the name of the current selected node.
+    #     """
+    #     return self._currentSelectedNodeName
 
     def getCurrentSelectedNodeNameList(self):
-        tmp = self._currentSelectedNodeName
-        self._currentSelectedNodeName = QObjectListModel()
+        tmp = self._currentSelectedNodeNameList
+        self._currentSelectedNodeNameList = QObjectListModel()
         for value in tmp:
-            self._currentSelectedNodeName.append(value)
-        return self._currentSelectedNodeName
+            self._currentSelectedNodeNameList.append(value)
+        return self._currentSelectedNodeNameList
 
     @QtCore.Slot(int, result="QVariant")
     def getCurrentSelectedNodeNameIndex(self, index):
-        return self.currentSelectedNodeNameList()[index]
+        return self.getCurrentSelectedNodeNameList()[index]
 
     def getCurrentViewerNodeName(self):
         """
@@ -89,21 +89,21 @@ class ButtleData(QtCore.QObject, Singleton):
         """
         return self.getGraphWrapper().getNodeWrapper(self.getCurrentParamNodeName())
 
-    def getCurrentSelectedNodeWrapper(self):
-        """
-            Returns the current selected nodeWrapper.
-        """
-        return self.getGraphWrapper().getNodeWrapper(self.getCurrentSelectedNodeName())
+    # def getCurrentSelectedNodeWrapper(self):
+    #     """
+    #         Returns the current selected nodeWrapper.
+    #     """
+    #     return self.getGraphWrapper().getNodeWrapper(self.getcurrentSelectedNodeNameList())
 
     def getCurrentSelectedNodeWrapperList(self):
-        tmp = self._currentSelectedNodeWrapper
-        self._currentSelectedNodeWrapper = QObjectListModel()
+        tmp = self._currentSelectedNodeWrapperList
+        self._currentSelectedNodeWrapperList = QObjectListModel()
         for value in tmp:
-            self._currentSelectedNodeWrapper.append(value)
-        return self._currentSelectedNodeWrapper
+            self._currentSelectedNodeWrapperList.append(value)
+        return self._currentSelectedNodeWrapperList
 
     @QtCore.Slot(int, result="QVariant")
-    def getCurrentSelectedNodeWrapperListIndex(self, index):
+    def getCurrentSelectedNodeWrapperIndex(self, index):
         return self.getCurrentSelectedNodeWrapperList()[index]
 
     def getCurrentViewerNodeWrapper(self):
@@ -123,25 +123,28 @@ class ButtleData(QtCore.QObject, Singleton):
         self._currentParamNodeName = nodeWrapper.getName()
         self.currentParamNodeChanged.emit()
 
-    def setCurrentSelectedNodeWrapper(self, nodeWrapper):
-        """
-        Changes the current selected node and emits the change.
-        """
-        # if self._currentSelectedNodeName == nodeWrapper.getName():
-        #     return
-        # self._currentSelectedNodeName = nodeWrapper.getName()
-        # self.currentSelectedNodeChanged.emit()
+    # def setCurrentSelectedNodeWrapper(self, nodeWrapper):
+    #     """
+    #     Changes the current selected node and emits the change.
+    #     """
+    #     # if self._currentSelectedNodeName == nodeWrapper.getName():
+    #     #     return
+    #     # self._currentSelectedNodeName = nodeWrapper.getName()
+    #     # self.currentSelectedNodeChanged.emit()
 
-        self._currentSelectedNodeWrapperue = QObjectListModel()
-        self._currentSelectedNodeWrapper.append(nodeWrapper)
-        self._currentSelectedNodeName.append(nodeWrapper.getName())
-        self.currentSelectedNodeChanged.emit()
+    #     self._currentSelectedNodeWrapper = QObjectListModel()
+    #     self._currentSelectedNodeWrapper.append(nodeWrapper)
+    #     self._currentSelectedNodeNameList.append(nodeWrapper.getName())
+    #     self.currentSelectedNodeChanged.emit()
 
     def setCurrentSelectedNodeWrapperList(self, nodeWrapper):
         self._currentSelectedNodeWrapper = QObjectListModel()
         self._currentSelectedNodeWrapper.append(nodeWrapper)
-        self._currentSelectedNodeName.append(nodeWrapper.getName())
-        self.currentSelectedNodeChanged.emit()
+        self.currentSelectedNodeWrapperListChanged.emit()
+
+    def setCurrentSelectedNodeNameList(self, nodeWrapper):
+        self._currentSelectedNodeNameList.append(nodeWrapper.getName())
+        self.currentSelectedNodeNameListChanged.emit()
 
     def setCurrentViewerNodeWrapper(self, nodeWrapper):
         """
@@ -190,15 +193,16 @@ class ButtleData(QtCore.QObject, Singleton):
         #if at least one node in the graph
         if len(self.getGraphWrapper().getNodeWrappers()) > 0 and len(self.getGraph().getNodes()) > 0:
             # if a node is selected
-            if self._currentSelectedNodeName != None:
-                for nodeName in self._currentSelectedNodeName:
-                    self.getGraph.deleteNode(nodeName.getName())
+            if self._currentSelectedNodeNameList != None:
+                for nodeName in self._currentSelectedNodeNameList:
+                    self.getGraph().deleteNode(self.getCurrentSelectedNodeNameIndex(0))
+                    self._currentSelectedNodeNameList.remove(nodeName)
+                    self.currentSelectedNodeNameListChanged.emit()
+                    #self._currentSelectedNodeWrapper = []
 
                 #self.getGraph().deleteNode(self._currentSelectedNodeName)
-        self._currentSelectedNodeNameList = []
-        self.currentSelectedNodeChanged.emit()
-        self._currentParamNodeName = None
         self.currentParamNodeChanged.emit()
+        self._currentParamNodeName = None
         self._currentViewerNodeName = None
         self.currentViewerNodeChanged.emit()
 
@@ -327,10 +331,14 @@ class ButtleData(QtCore.QObject, Singleton):
     currentParamNodeWrapper = QtCore.Property(QtCore.QObject, getCurrentParamNodeWrapper, setCurrentParamNodeWrapper, notify=currentParamNodeChanged)
     currentViewerNodeChanged = QtCore.Signal()
     currentViewerNodeWrapper = QtCore.Property(QtCore.QObject, getCurrentViewerNodeWrapper, setCurrentViewerNodeWrapper, notify=currentViewerNodeChanged)
-    currentSelectedNodeChanged = QtCore.Signal()
-    currentSelectedNodeWrapper = QtCore.Property(QtCore.QObject, getCurrentSelectedNodeWrapper, setCurrentSelectedNodeWrapper, notify=currentSelectedNodeChanged)
-    currentSelectedNodeWrapperList = QtCore.Property(QtCore.QObject, getCurrentSelectedNodeWrapperList, setCurrentSelectedNodeWrapperList, notify=currentSelectedNodeChanged)
-    currentSelectedNodeWrapperListIndex = QtCore.Property(QtCore.QObject, getCurrentSelectedNodeWrapperListIndex, constant=True)
+    #currentSelectedNodeChanged = QtCore.Signal()
+    #currentSelectedNodeWrapper = QtCore.Property(QtCore.QObject, getCurrentSelectedNodeWrapper, setCurrentSelectedNodeWrapper, notify=currentSelectedNodeChanged)
+    currentSelectedNodeWrapperListChanged = QtCore.Signal()
+    currentSelectedNodeWrapperList = QtCore.Property(QtCore.QObject, getCurrentSelectedNodeWrapperList, setCurrentSelectedNodeWrapperList, notify=currentSelectedNodeWrapperListChanged)
+    currentSelectedNodeWrapperIndex = QtCore.Property(QtCore.QObject, getCurrentSelectedNodeWrapperIndex, constant=True)
+    currentSelectedNodeNameListChanged = QtCore.Signal()
+    currentSelectedNodeNameList = QtCore.Property(QtCore.QObject, getCurrentSelectedNodeNameList, setCurrentSelectedNodeNameList, notify=currentSelectedNodeNameListChanged)
+    currentSelectedNodeNameIndex = QtCore.Property(QtCore.QObject, getCurrentSelectedNodeNameIndex, constant=True)
 
     # tuttle data
     tuttlePlugins = QtCore.Property(QtCore.QObject, getQObjectPluginsIdentifiers, constant=True)

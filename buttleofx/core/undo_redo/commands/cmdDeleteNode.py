@@ -45,6 +45,7 @@ class CmdDeleteNode(UndoableCommand):
             Delete a node.
         """
         node = self.graphTarget.getNode(self.nodeName)
+        print self.nodeName
         # we store the node type and its coordinates in order to be able to recreate it
         self.nodeType = node.getType()
         self.nodeCoord = node.getCoord()
